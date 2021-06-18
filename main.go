@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/power-sentinel/ddns"
 )
 
 func main() {
@@ -19,27 +22,34 @@ func main() {
 
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("All systems stable"))
+	r.Get("/api/v1/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("1"))
 	})
 
-	// r.Post("/alert", func(w http.ResponseWriter, req *http.Request) {
-	// 	decoder := json.NewDecoder(req.Body)
-	// 	var a bot.Alert
-	// 	err := decoder.Decode(&a)
-	// 	if err != nil {
-	// 		log.Println(err)
-	// 	}
-
-	// 	c := db.C("Alerts")
-	// 	if err := c.Insert(a); err != nil {
-	// 		w.Write([]byte(fmt.Sprintf("Failed reporting alert with the following error:\n %v", err.Error())))
-	// 	}else{
-	// 		w.Write([]byte("Successfully reported alert"))
-	// 	}
-	// })
+	ddns.NewDDNSService()
 
 	log.Println("Server listening on port: 6660")
 	http.ListenAndServe(":6660", r)
 
+}
+
+func SystemUpNotification() {
+	values := map[string]string{"status": "up", "time": time.Now().String()}
+	json_data, err := json.Marshal(values)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	resp, err := http.Post("https://httpbin.org/post", "application/json",
+		bytes.NewBuffer(json_data))
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	var res map[string]interface{}
+
+	json.NewDecoder(resp.Body).Decode(&res)
+	log.Println(res)
 }
