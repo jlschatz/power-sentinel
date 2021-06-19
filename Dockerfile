@@ -10,10 +10,10 @@ RUN  CGO_ENABLED=0 go build
 
 FROM alpine
 
-RUN apk --update --no-cache add openssh ca-certificates && update-ca-certificates 2>/dev/null || true
+RUN apk --update --no-cache add openssh ca-certificates bind-tools && update-ca-certificates 2>/dev/null || true
 
 WORKDIR /app
 COPY --from=buildStage /go/src/github.com/power-sentinel .
 
-EXPOSE 6669
+EXPOSE 80
 ENTRYPOINT ["/app/power-sentinel"]
