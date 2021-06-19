@@ -28,8 +28,8 @@ func main() {
 
 	ddns.NewDDNSService()
 
-	log.Println("Server listening on port: 6660")
-	http.ListenAndServe(":6660", r)
+	log.Println("Server listening on port: 80")
+	http.ListenAndServe(":80", r)
 
 }
 
