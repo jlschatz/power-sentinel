@@ -22,6 +22,7 @@ jobs:
           command: |
             mkdir -p /tmp/test-reports
             gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+      - checkout
       - setup_remote_docker
       - run:
           name: Push application Docker image
