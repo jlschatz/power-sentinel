@@ -25,11 +25,8 @@ jobs:
       - deploy:
           name: Push application Docker image
           command: |
-            if [ "$ {CIRCLE_BRANCH}" == "master" ]; then
-              docker login $TREESCALE_REPOSITORY -u $TREESCALE_USER -p $TREESCALE_PASSWORD
-              docker build -t $TREESCALE_REPOSITORY .
-              docker push $TREESCALE_REPOSITORY
-
-            fi      
+            docker login $TREESCALE_REPOSITORY -u $TREESCALE_USER -p $TREESCALE_PASSWORD
+            docker build -t $TREESCALE_REPOSITORY .
+            docker push $TREESCALE_REPOSITORY     
       - store_test_results:
           path: /tmp/test-reports
